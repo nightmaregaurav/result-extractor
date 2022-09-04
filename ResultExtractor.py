@@ -4,6 +4,8 @@ import os
 import weasyprint
 import pdf2image
 from slugify import slugify
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
 
 # noinspection PyShadowingBuiltins
@@ -58,7 +60,50 @@ def get_campus_dict():
     return campus_dict
 
 
-def publish_result(_year, _campus_code, _campus_name="", _campus_address="", _mode=2, _action="N", _result_name="BCA Entrance Result"):
+def get_drive_auth():
+    auth = GoogleAuth()
+    auth.LoadCredentialsFile("credentials.txt")
+    if auth.credentials is None:
+        auth.LocalWebserverAuth()
+    elif auth.access_token_expired:
+        auth.Refresh()
+    else:
+        auth.Authorize()
+    auth.SaveCredentialsFile("credentials.txt")
+    drive = GoogleDrive(auth)
+    return drive
+
+
+def upload_to_drive(drive, files, folder, folder_id=None):
+    folder_link = None
+    if folder_id is None:
+        folder = drive.CreateFile({'title': folder, 'mimeType': 'application/vnd.google-apps.folder'})
+        folder.Upload()
+        folder.InsertPermission({
+            'type': 'anyone',
+            'value': 'anyone',
+            'role': 'reader'
+        })
+        folder_id = folder.get('id')
+        folder_link = folder.get('alternateLink')
+
+    file_link = ""
+    for file in files:
+        file_drive = drive.CreateFile({'parents': [{'id': folder_id}], 'title': file.split("/")[-1]})
+        file_drive.SetContentFile(file)
+        file_drive.Upload()
+        file_drive.InsertPermission({
+            'type': 'anyone',
+            'value': 'anyone',
+            'role': 'reader'
+        })
+        if file.endswith(".pdf"):
+            file_link = file_drive.get('alternateLink')
+
+    return folder_link, folder_id, file_link
+
+
+def publish_result(_year, _campus_code, _campus_name="", _campus_address="", _mode=2, _action="N", _result_name="BCA Entrance Result", _upload="N"):
     assert type(_year) == str
     assert type(_campus_code) == int
     assert type(_campus_name) == str
@@ -66,12 +111,26 @@ def publish_result(_year, _campus_code, _campus_name="", _campus_address="", _mo
     assert type(_mode) == int
     assert type(_action) == str
     assert type(_result_name) == str
+    assert type(_upload) == str
 
     _year = _year.strip()
     _campus_name = _campus_name.strip()
     _campus_address = _campus_address.strip()
     _action = _action.strip().upper()
     _result_name = _result_name.strip()
+    _upload = _upload.strip().upper()
+    assert _action in ["N", "Y"]
+
+    upload = input_for_script(f"Do you want to upload the result to Google Drive? (Y/N) [default: {_upload}]: ", _upload)
+    upload = upload.strip().upper()
+    assert upload in ["N", "Y"]
+
+    drive_auth = None
+    if upload == "Y":
+        if os.path.exists("client_secrets.json"):
+            drive_auth = get_drive_auth()
+        else:
+            print("client_secrets.json not found. Falling back to NO-UPLOAD Mode.")
 
     merit_list = get_merit_list()
 
@@ -143,6 +202,7 @@ def publish_result(_year, _campus_code, _campus_name="", _campus_address="", _mo
         )''')
         summary_db.commit()
 
+    folder_link, folder_id = None, None
     for campus_code in campus_dict_to_work_on:
         campus_name = campus_dict_to_work_on[campus_code]['campus_name']
         campus_name = " ".join(campus_name.replace(" ,", ",").replace(",", ", ").split()).title()
@@ -249,32 +309,39 @@ def publish_result(_year, _campus_code, _campus_name="", _campus_address="", _mo
 
         if mode == 2:
             # noinspection SqlDialectInspection,SqlNoDataSourceInspection,PyUnboundLocalVariable
-            summary_cursor.execute(f"INSERT INTO summary VALUES({campus_code}, '{campus_name}', '{campus_address}', {campus_rank})")
+            summary_cursor.execute(
+                f"INSERT INTO summary VALUES({campus_code}, '{campus_name}', '{campus_address}', {campus_rank})")
 
         if campus_rank != 0:
-            campus_dir = f"{campus_code} - {campus_name}, {campus_address}".strip()
+            campus_dir = f"result_outputs_post_files/{campus_code} - {campus_name}, {campus_address}".strip()
 
             os.makedirs("result_outputs", exist_ok=True)
             os.makedirs("result_outputs_post_files", exist_ok=True)
-
-            os.makedirs(f"result_outputs_post_files/{campus_dir}", exist_ok=True)
+            os.makedirs(f"{campus_dir}", exist_ok=True)
 
             text_file = open(f"result_outputs/{campus_code}.txt", "w")
             html_file = open(f"result_outputs/{campus_code}.html", "w")
-            post_file = open(f"result_outputs_post_files/{campus_dir}/post_file.txt", "w")
 
-            post_file.write(post_file_content)
             text_file.write(text_file_content)
             html_file.write(html_file_content)
 
-            post_file.close()
             text_file.close()
             html_file.close()
 
             weasyprint.HTML(f'result_outputs/{campus_code}.html').write_pdf(f'result_outputs/{campus_code}.pdf')
             images = pdf2image.convert_from_path(f'result_outputs/{campus_code}.pdf')
             for i in range(len(images)):
-                images[i].save(f'result_outputs_post_files/{campus_dir}/Page {i+1}.jpg', "JPEG")
+                images[i].save(f'{campus_dir}/Page {i + 1}.jpg', "JPEG")
+
+            if drive_auth is not None:
+                _folder_link, folder_id, file_link = upload_to_drive(drive_auth, [f"result_outputs/{campus_code}.pdf", f"result_outputs/{campus_code}.html", f"result_outputs/{campus_code}.txt"], f"{result_name} {year}", folder_id)
+                if _folder_link is not None:
+                    folder_link = _folder_link
+                post_file_content.replace("<<replace_me>>", file_link)
+
+            post_file = open(f"{campus_dir}/post_file.txt", "w")
+            post_file.write(post_file_content)
+            post_file.close()
 
     if mode == 2:
         # noinspection PyUnboundLocalVariable
@@ -286,14 +353,22 @@ def publish_result(_year, _campus_code, _campus_name="", _campus_address="", _mo
             print(f"You are missing campus codes of {len(unknown_campus_codes)} campuses:")
             for campus_code in unknown_campus_codes:
                 print(f"\tCampus Code: {campus_code}")
-                print(f"\tTotal passed Students in {campus_code}: {len(campus_dict_to_work_on[campus_code]['merit_list'])}\n")
+                print(
+                    f"\tTotal passed Students in {campus_code}: {len(campus_dict_to_work_on[campus_code]['merit_list'])}\n")
                 # noinspection SqlDialectInspection,SqlNoDataSourceInspection
 
+    if folder_link is None:
+        upload_text = "Upload PDF, HTML, and TXT files of campus' result which are inside 'result_outputs' folder of your current directory to google drive."
+        replace_text = "Replace <<replace_me>> in fifth line of 'result_outputs_post_files/<<campus_code>> - <<campus_name>>, <<campus_address>>/post_file.txt with the link copied for corresponding files to PDF.\n"
+    else:
+        upload_text = f"Files are upload to google drive. You can access them from here: {folder_link}"
+        replace_text = ""
+
     print(f"\n\nDear admin, \n"
-          f"Upload PDF, HTML, and TXT files of campus' result which are inside 'result_outputs' folder of your current directory to google drive.\n"
+          f"{upload_text}\n"
           f"Share the files so anyone with the link may access them.\n"
           f"Copy the PDF links of each PDFs.\n"
-          f"Replace <<replace_me>> in fifth line of 'result_outputs_post_files/<<campus_code>> - <<campus_name>>, <<campus_address>>/post_file.txt with the link copied for corresponding files to PDF.\n"
+          f"{replace_text}"
           f"Copy and paste whatever is in 'result_outputs_post_files/<<campus_code>> - <<campus_name>>, <<campus_address>>/post_file.txt' and post it in the facebook page after attaching photos in 'result_outputs_post_files/<<campus_code>> - <<campus_name>>, <<campus_address>>' folder of your current directory.")
 
     if mode == 2:
@@ -306,7 +381,8 @@ def publish_result(_year, _campus_code, _campus_name="", _campus_address="", _mo
     for campus_code in new_campus_codes:
         print(f"\t{campus_code}\n")
     if len(new_campus_codes) > 0:
-        action = input_for_script(f"Do you want to add these campus codes to database? (Y/N) [default: {_action}]: ", _action)
+        action = input_for_script(f"Do you want to add these campus codes to database? (Y/N) [default: {_action}]: ",
+                                  _action)
         assert action in ["Y", "N"]
         if action.upper() == "Y":
             conn = sqlite3.connect('campus.db')
@@ -314,7 +390,8 @@ def publish_result(_year, _campus_code, _campus_name="", _campus_address="", _mo
                 campus_name = campus_dict_to_work_on[campus_code]["campus_name"]
                 campus_address = campus_dict_to_work_on[campus_code]["campus_address"]
                 # noinspection SqlDialectInspection,SqlNoDataSourceInspection
-                conn.execute(f"INSERT INTO campus(code,name,address) VALUES('{campus_code}', '{campus_name}','{campus_address}')")
+                conn.execute(
+                    f"INSERT INTO campus(code,name,address) VALUES('{campus_code}', '{campus_name}','{campus_address}')")
             conn.commit()
             conn.close()
 
