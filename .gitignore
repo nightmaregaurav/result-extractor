@@ -78,3 +78,4 @@ client_secrets.json
 client_secrets.json.bak
 summary.db*
 credentials.txt
+Publish-*/
