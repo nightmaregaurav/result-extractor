@@ -2,7 +2,7 @@ import sqlite3
 from string import Template
 from typing import TextIO
 
-from templates import SUMMARY_HTML_HEADER, SUMMARY_HTML_BODY, SUMMARY_HTML_FOOTER
+from .templates import SUMMARY_HTML_HEADER, SUMMARY_HTML_BODY, SUMMARY_HTML_FOOTER
 
 
 def prepare_summary_table_in_result_db(folder_name: str) -> None:

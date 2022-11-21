@@ -55,6 +55,8 @@ if __name__ == '__main__':
     if len(args) == 1:
         publish("N", "Result", "IN.txt")
     elif 2 <= len(args) <= 5 and args[1] == "add-campus":
+        name = "__main__"
+
         if len(args) > 2:
             campus_code: str = args[2]
         else:
@@ -67,10 +69,10 @@ if __name__ == '__main__':
 
         if len(args) > 4:
             campus_address: str = args[4]
-            name = "__main__"
+            name = ""
+
         else:
             campus_address: str = ""
-            name = ""
 
         campus_code: str = get_user_input_or_set_default_with_validation("Enter Campus Code:", campus_code, "[0-9]*", name)
         campus_name: str = get_user_input_or_set_default_with_validation("Enter Campus Name:", campus_name, name)

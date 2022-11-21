@@ -6,10 +6,10 @@ from typing import TextIO
 
 from slugify import slugify
 
-from campus_helper import get_all_campuses, insert_campuses_into_result_db, get_campus_code_from_student_code, \
+from .campus_helper import get_all_campuses, insert_campuses_into_result_db, get_campus_code_from_student_code, \
     prepare_campus_table_in_result_db, get_campus_name_and_address_by_campus_code
-from summary_helper import prepare_summary_table_in_result_db, fill_summary_data_in_result_db
-from templates import HTML_HEADER, HTML_BODY, HTML_FOOTER
+from .summary_helper import prepare_summary_table_in_result_db, fill_summary_data_in_result_db
+from .templates import HTML_HEADER, HTML_BODY, HTML_FOOTER
 
 
 def parse_result_file(file_path: str) -> list:
