@@ -2,14 +2,14 @@
 import os
 import sys
 
-from file_helper import make_pdf_files, make_image_files, move_pdfs_in_pdf_folder, move_htmls_in_html_folder, \
+from src.file_helper import make_pdf_files, make_image_files, move_pdfs_in_pdf_folder, move_htmls_in_html_folder, \
     move_folders_to_images_folder
-from google_drive_helper import upload_folder_to_drive_recursively
-from result_helper import prepare_result_db_and_return_folder_name, group_result_by_campus, \
+from src.google_drive_helper import upload_folder_to_drive_recursively
+from src.result_helper import prepare_result_db_and_return_folder_name, group_result_by_campus, \
     create_html_table_file_for_campus_result
-from campus_helper import add_campus
-from summary_helper import create_html_table_file_from_summary
-from utils import get_user_input_or_set_default_with_validation
+from src.campus_helper import add_campus
+from src.summary_helper import create_html_table_file_from_summary
+from src.utils import get_user_input_or_set_default_with_validation
 
 
 def publish(_upload: str = None, _result_name: str = None, _input_filename: str = None) -> None:
