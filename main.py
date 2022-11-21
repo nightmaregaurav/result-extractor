@@ -81,4 +81,5 @@ if __name__ == '__main__':
 
         add_campus(int(campus_code), campus_name, campus_address)
     else:
-        print(f"Invalid arguments. Please use 'python {args[0]}' or 'python {args[0]} add-campus'")
+        print(f"Invalid arguments. Please use 'python {args[0]}'"
+              f" or 'python {args[0]} add-campus [campus-code] [campus-name] [campus-address]' {{Where [] are optional}}")
