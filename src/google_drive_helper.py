@@ -3,6 +3,8 @@ import os
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive, GoogleDriveFile
 
+from src.utils import start_progress_spinner, stop_progress_spinner
+
 
 def __get_drive_auth(auth_credentials_file: str = None) -> GoogleDrive:
     if auth_credentials_file is None:
@@ -25,17 +27,18 @@ def __get_drive_auth(auth_credentials_file: str = None) -> GoogleDrive:
 
 
 def upload_drive_file_to_google_drive(drive_file: GoogleDriveFile, content_type: str = "") -> (str, str):
-    drive_file.Upload()
-    drive_file.InsertPermission({
-        'type': 'anyone',
-        'value': 'anyone',
-        'role': 'reader'
-    })
+    progress_message: str = "Uploading " + content_type.title() + " " + drive_file['title']
+    with start_progress_spinner(progress_message) as progress_thread:
+        drive_file.Upload()
+        drive_file.InsertPermission({
+            'type': 'anyone',
+            'value': 'anyone',
+            'role': 'reader'
+        })
+        content_link: str = drive_file.get('alternateLink')
+        content_id: str = drive_file.get('id')
+        stop_progress_spinner(progress_thread, f"Done: {content_link}")
 
-    content_link: str = drive_file.get('alternateLink')
-    content_id: str = drive_file.get('id')
-
-    print(f"{content_type.title()} is uploaded to google drive. You can access it from here: {content_link}")
     return content_id, content_link
 
 

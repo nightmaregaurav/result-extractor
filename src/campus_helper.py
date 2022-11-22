@@ -25,6 +25,7 @@ def add_campus(campus_code: int, campus_name: str, campus_address: str) -> None:
         cursor.execute("INSERT INTO campus VALUES (?, ?, ?)", (campus_code, campus_name, campus_address))
         conn.commit()
         conn.close()
+        print(f"Campus {campus_code} : {campus_name} added successfully.")
     except sqlite3.IntegrityError:
         print("Campus code already exists. Please try again.")
 

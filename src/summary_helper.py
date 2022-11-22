@@ -1,4 +1,5 @@
 import sqlite3
+
 from string import Template
 from typing import TextIO
 

@@ -1,13 +1,13 @@
 import os
 import sqlite3
+
 from datetime import datetime
 from string import Template
 from typing import TextIO
-
 from slugify import slugify
 
-from .campus_helper import get_all_campuses, insert_campuses_into_result_db, get_campus_code_from_student_code, \
-    prepare_campus_table_in_result_db, get_campus_name_and_address_by_campus_code
+from .campus_helper import get_all_campuses, insert_campuses_into_result_db, get_campus_code_from_student_code, prepare_campus_table_in_result_db, get_campus_name_and_address_by_campus_code
+from .file_helper import make_pdf_files, make_image_files, move_pdfs_in_pdf_folder, move_htmls_in_html_folder, move_folders_to_images_folder
 from .summary_helper import prepare_summary_table_in_result_db, fill_summary_data_in_result_db
 from .templates import HTML_HEADER, HTML_BODY, HTML_FOOTER
 
@@ -130,3 +130,11 @@ def create_html_table_file_for_campus_result(campus_code: int, data: list, folde
     file: TextIO = open(file_path, "w")
     file.write(file_html)
     file.close()
+
+
+def process_result_htmls(result_folder: str) -> None:
+    make_pdf_files(result_folder)
+    make_image_files(result_folder)
+    move_pdfs_in_pdf_folder(result_folder)
+    move_htmls_in_html_folder(result_folder)
+    move_folders_to_images_folder(result_folder)
