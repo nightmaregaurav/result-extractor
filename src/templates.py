@@ -72,13 +72,13 @@ HTML_FOOTER = """
 
 HTML_BODY = """
             <tr>
-                <td style='text-align: right;'>
+                <td style='text-align: center;'>
                     $global_rank
                 </td>
-                <td style='text-align: right;'>
+                <td style='text-align: center;'>
                     $campus_rank
                 </td>
-                <td style='text-align: right;'>
+                <td style='text-align: center;'>
                     $symbol_number
                 </td>
             </tr>
@@ -108,13 +108,13 @@ SUMMARY_HTML_HEADER = """
                 <th style='text-align: center;'>
                     | Campus Code |
                 </th>
-                <th style='text-align: left;'>
+                <th style='text-align: center;'>
                     | Campus Name |
                 </th>
-                <th style='text-align: left;'>
+                <th style='text-align: center;'>
                     | Campus Address |
                 </th>
-                <th style='text-align: right;'>
+                <th style='text-align: center;'>
                     | Total Passed Students |
                 </th>
             </tr>
@@ -141,7 +141,7 @@ SUMMARY_HTML_FOOTER = """
 
 SUMMARY_HTML_BODY = """
             <tr>
-                <td style='text-align: center;'>
+                <td style='text-align: right;'>
                     $campus_code
                 </td>
                 <td style='text-align: left;'>
