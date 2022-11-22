@@ -71,11 +71,5 @@ database.db
 # vs
 .vs/
 
-/result_outputs
-/result_outputs_post_files
-summary.db
-client_secrets.json
-client_secrets.json.bak
-summary.db*
-credentials.txt
+client_secrets*
 Publish-*/

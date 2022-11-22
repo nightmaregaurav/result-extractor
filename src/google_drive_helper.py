@@ -5,11 +5,10 @@ from pydrive.drive import GoogleDrive, GoogleDriveFile
 
 from src.utils import start_progress_spinner, stop_progress_spinner
 
+auth_credentials_file = "client_secrets_credentials.txt"
 
-def __get_drive_auth(auth_credentials_file: str = None) -> GoogleDrive:
-    if auth_credentials_file is None:
-        auth_credentials_file = "credentials.txt"
 
+def __get_drive_auth() -> GoogleDrive:
     auth: GoogleAuth = GoogleAuth()
     auth.LoadCredentialsFile(auth_credentials_file)
 
@@ -42,8 +41,8 @@ def upload_drive_file_to_google_drive(drive_file: GoogleDriveFile, content_type:
     return content_id, content_link
 
 
-def upload_folder_to_drive(folder: str, folder_id: str = None, auth_credentials_file: str = None) -> (str, str):
-    drive: GoogleDrive = __get_drive_auth(auth_credentials_file)
+def upload_folder_to_drive(folder: str, folder_id: str = None) -> (str, str):
+    drive: GoogleDrive = __get_drive_auth()
 
     if folder_id is not None:
         parents: dict = {'parents': [{'id': folder_id}]}
@@ -54,8 +53,8 @@ def upload_folder_to_drive(folder: str, folder_id: str = None, auth_credentials_
     return upload_drive_file_to_google_drive(folder, "Folder")
 
 
-def upload_file_to_drive(_file: str, folder_id: str = None, auth_credentials_file: str = None) -> (str, str):
-    drive: GoogleDrive = __get_drive_auth(auth_credentials_file)
+def upload_file_to_drive(_file: str, folder_id: str = None) -> (str, str):
+    drive: GoogleDrive = __get_drive_auth()
 
     if folder_id is not None:
         parents: dict = {'parents': [{'id': folder_id}]}

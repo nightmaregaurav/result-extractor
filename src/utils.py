@@ -34,7 +34,7 @@ def filter_duplicates_from_list(input_list: list) -> list:
     return filtered_list
 
 
-def start_progress_spinner(message: str):
+def start_progress_spinner(message: str) -> Yaspin:
     sp: Yaspin = yaspin(text=message, color="yellow")
     return sp
 
