@@ -42,14 +42,12 @@ def publish_result(_upload: str = None, _result_name: str = None, _input_filenam
         process_result_htmls(result_folder)
         stop_progress_spinner(progress_thread, "Done!")
 
-    with start_progress_spinner("Saving Results") as progress_thread:
-        if upload == "Y":
-            folder_info: list = upload_folder_to_drive_recursively(result_folder)
-            folder_link: str = folder_info[1]
-            print(f"Result is uploaded to google drive. You can access it from here: {folder_link}")
-        else:
-            print(f"Result is stored in {result_folder} folder.")
-        stop_progress_spinner(progress_thread, "Done!")
+    if upload == "Y":
+        folder_info: list = upload_folder_to_drive_recursively(result_folder)
+        folder_link: str = folder_info[1]
+        print(f"Result is uploaded to google drive. You can access it from here: {folder_link}")
+    else:
+        print(f"Result is stored in {result_folder} folder.")
 
 
 def process_add_campus(_args: list) -> None:
