@@ -90,6 +90,11 @@ SUMMARY_HTML_HEADER = """
 <head>
     <meta charset="UTF-8">
     <title>$result_name : SUMMARY</title>
+    <style type="text/css">
+        @page {
+            size: landscape;
+        }
+    </style>
 </head>
 <body>
     <center>
@@ -106,16 +111,16 @@ SUMMARY_HTML_HEADER = """
             </tr>
             <tr>
                 <th style='text-align: center;'>
-                    | Campus Code |
+                    | Code |
                 </th>
                 <th style='text-align: center;'>
-                    | Campus Name |
+                    | Name |
                 </th>
                 <th style='text-align: center;'>
-                    | Campus Address |
+                    | Address |
                 </th>
                 <th style='text-align: center;'>
-                    | Total Passed Students |
+                    | Passed |
                 </th>
             </tr>
         </thead>
@@ -141,7 +146,7 @@ SUMMARY_HTML_FOOTER = """
 
 SUMMARY_HTML_BODY = """
             <tr>
-                <td style='text-align: right;'>
+                <td style='text-align: center;'>
                     $campus_code
                 </td>
                 <td style='text-align: left;'>
@@ -150,7 +155,7 @@ SUMMARY_HTML_BODY = """
                 <td style='text-align: left;'>
                     $campus_address
                 </td>
-                <td style='text-align: right;'>
+                <td style='text-align: center;'>
                     $total_passed_students
                 </td>
             </tr>
