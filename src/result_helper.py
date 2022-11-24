@@ -6,8 +6,9 @@ from string import Template
 from typing import TextIO
 from slugify import slugify
 
-from .campus_helper import get_all_campuses, insert_campuses_into_result_db, get_campus_code_from_student_code, prepare_campus_table_in_result_db, get_campus_name_and_address_by_campus_code
+from .campus_helper import get_all_campuses, insert_campuses_into_result_db, prepare_campus_table_in_result_db, get_campus_name_and_address_by_campus_code
 from .file_helper import make_pdf_files, make_image_files, move_pdfs_in_pdf_folder, move_htmls_in_html_folder, move_folders_to_images_folder
+from .student_symbol_no_helper import get_campus_code_from_student_code
 from .summary_helper import prepare_summary_table_in_result_db, fill_summary_data_in_result_db
 from .templates import HTML_HEADER, HTML_BODY, HTML_FOOTER
 
@@ -41,7 +42,7 @@ def prepare_result_table_in_result_db(folder_name: str) -> None:
     result_connection.close()
 
 
-def insert_results_into_result_db(results: list, folder_name: str) -> None:
+def insert_results_into_result_db(results: list, folder_name: str, pattern_with_group_to_get_campus_code: str) -> None:
     result_db_path: str = folder_name + "/result.db"
     result_connection: sqlite3.Connection = sqlite3.connect(result_db_path)
     cursor: sqlite3.Cursor = result_connection.cursor()
@@ -49,13 +50,13 @@ def insert_results_into_result_db(results: list, folder_name: str) -> None:
         # noinspection SqlDialectInspection
         cursor.execute("INSERT INTO result VALUES (?, ?, ?)", (
             result,
-            get_campus_code_from_student_code(result),
+            get_campus_code_from_student_code(result, pattern_with_group_to_get_campus_code),
             index+1))
     result_connection.commit()
     result_connection.close()
 
 
-def prepare_result_db_and_return_folder_name(input_filename: str, result_name: str) -> str:
+def prepare_result_db_and_return_folder_name(input_filename: str, result_name: str, pattern_with_group_to_get_campus_code: str) -> str:
     folder_name: str = create_result_folder(result_name)
     result_db_path: str = folder_name + "/result.db"
     prepare_campus_table_in_result_db(result_db_path)
@@ -63,7 +64,7 @@ def prepare_result_db_and_return_folder_name(input_filename: str, result_name: s
     prepare_summary_table_in_result_db(folder_name)
 
     insert_campuses_into_result_db(get_all_campuses(), result_db_path)
-    insert_results_into_result_db(parse_result_file(input_filename), folder_name)
+    insert_results_into_result_db(parse_result_file(input_filename), folder_name, pattern_with_group_to_get_campus_code)
     fill_summary_data_in_result_db(folder_name)
 
     return folder_name

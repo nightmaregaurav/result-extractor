@@ -3,10 +3,6 @@ import sqlite3
 DEFAULT_CAMPUS_DB = "campus.db"
 
 
-def get_campus_code_from_student_code(student_code: str) -> int:
-    return int(student_code.split("-")[0])
-
-
 def get_all_campuses() -> list:
     conn: sqlite3.Connection = sqlite3.connect(DEFAULT_CAMPUS_DB)
     cursor: sqlite3.Cursor = conn.cursor()

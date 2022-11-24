@@ -13,7 +13,9 @@ from src.utils import get_user_input_or_set_default_with_validation, start_progr
 
 def publish_result(_upload: str = None, _result_name: str = None, _input_filename: str = None) -> None:
     result_name: str = get_user_input_or_set_default_with_validation("Result Name:", _result_name)
-    result_name = result_name.strip().title()
+    input_filename: str = get_user_input_or_set_default_with_validation("Result File Name:", _input_filename, r".+\.txt$")
+    pattern_with_group_to_get_campus_code: str = get_user_input_or_set_default_with_validation("Enter Pattern to get Campus Code:", r"^(\d+)-.+$")
+    result_name = result_name.title()
 
     if os.path.exists("client_secrets.json"):
         upload: str = get_user_input_or_set_default_with_validation("Do you want to upload the result to Google Drive? (Y/N):", _upload, "[Y|N]")
@@ -21,11 +23,8 @@ def publish_result(_upload: str = None, _result_name: str = None, _input_filenam
         print("client_secrets.json not found. Falling back to NO-UPLOAD Mode.")
         upload: str = "N"
 
-    input_filename: str = get_user_input_or_set_default_with_validation("Result File Name:", _input_filename, r".+\.txt$")
-    input_filename = input_filename.strip()
-
     progress_thread: Yaspin = start_progress_spinner("Preparing Result DB")
-    result_folder: str = prepare_result_db_and_return_folder_name(input_filename, result_name)
+    result_folder: str = prepare_result_db_and_return_folder_name(input_filename, result_name, pattern_with_group_to_get_campus_code)
     stop_progress_spinner(progress_thread, "Done!")
 
     progress_thread = start_progress_spinner("Creating Result Summary HTML")
@@ -66,8 +65,8 @@ def process_add_campus(_args: list) -> None:
     else:
         campus_address: str = get_user_input_or_set_default_with_validation("Enter Campus Address:", "")
 
-    campus_name = campus_name.strip().title()
-    campus_address = campus_address.strip().title()
+    campus_name = campus_name.title()
+    campus_address = campus_address.title()
 
     add_campus(int(campus_code), campus_name, campus_address)
 
