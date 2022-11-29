@@ -39,7 +39,7 @@ def create_html_table_file_from_summary(folder_name: str, result_name: str) -> N
     result_db_connection: sqlite3.Connection = sqlite3.connect(result_db_path)
     cursor: sqlite3.Cursor = result_db_connection.cursor()
     # noinspection SqlDialectInspection
-    cursor.execute("SELECT campus.campus_code, campus.campus_name, campus.campus_address, total_passed FROM summary FULL JOIN campus ON summary.campus_code = campus.campus_code ORDER BY total_passed DESC")
+    cursor.execute("SELECT campus.campus_code, campus.campus_name, campus.campus_address, total_passed FROM summary LEFT JOIN campus ON summary.campus_code = campus.campus_code ORDER BY total_passed DESC")
     summary_data: list = cursor.fetchall()
     result_db_connection.close()
 
