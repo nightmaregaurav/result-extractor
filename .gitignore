@@ -71,5 +71,6 @@ database.db
 # vs
 .vs/
 
+IN.txt
 client_secrets*
 Publish-*/
