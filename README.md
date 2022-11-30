@@ -6,7 +6,7 @@ This tool is used to extract the results of individual campus from a given file 
 
 ## Scenario
 
-[TUFOHSS](https://www.tufohss.edu.np) publishes the results of the `BCA TU Entrance Examination` in the form of a global merit list. This list contains the results of all the campuses. This tool is used to extract the results of individual campus from the global merit list. THis tool may be useful for similar scenario.
+[TUFOHSS](https://www.tufohss.edu.np) publishes the results of the `BCA TU Entrance Examination` in the form of a global merit list. This list contains the results of all the campuses. This tool is used to extract the results of individual campus from the global merit list. This tool may be useful for similar scenario.
 * The global merit list is in the form of a `.txt` file.
 * The global merit list contains the results of all the campuses.
 * The merit list contains the following information:
