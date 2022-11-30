@@ -18,7 +18,7 @@ This tool is used to extract the results of individual campus from a given file 
 
 ## Prerequisites
 * Regular Expression to extract the campus code from the Symbol Number.
-* client_secrets.json file for Google Drive API. (Help for this is provided in the client_secrets.json.readme file)
+* client_secrets.json file for Google Drive API. (Help for this is provided in [client_secrets.json.readme](https://raw.githubusercontent.com/nightmaregaurav/result-extractor/main/client_secrets.json.readme))
 * Input file containing the Symbol Numbers of the global merit list.
 * Update/Change Campus.db to match campus code, name, and address to match your scenario. Default sample contains TU-BCA campuses as of 2022-Nov.
 
