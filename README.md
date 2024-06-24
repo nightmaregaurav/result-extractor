@@ -22,13 +22,11 @@ This tool is used to extract the results of individual campus from a given file 
 * Input file containing the Symbol Numbers of the global merit list.
 * Update/Change Campus.db to match campus code, name, and address to match your scenario. Default sample contains TU-BCA campuses as of 2022-Nov.
 
-## Setup
+## Setup & Usage (Watch this [Video](https://youtu.be/ekbwX7EmEk8?si=zTvei7xvzmGXABPc)) Or:
 * Clone the repository.
 * Create a python virtual environment and switch to it.
 * Install the requirements using `pip install -r requirements.txt`.
 * Create a client_secrets.json file for Google Drive API if you want to upload results in Google Drive. (Help for this is provided in the client_secrets.json.readme file)
-
-## Usage
 * Run the `main.py` file.
 * Enter the Result Name `[e.g. BCA TU Entrance Examination]` `(Default: Result)`.
 * Enter the input file name `[e.g. result.txt]` `(Default: IN.txt)`.
