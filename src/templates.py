@@ -3,7 +3,7 @@ HTML_HEADER = """
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$campus_code $result_name</title>
+    <title>$campus_name ($campus_code) : $result_name</title>
 </head>
 <body>
     <center>
@@ -11,17 +11,17 @@ HTML_HEADER = """
         <thead>
             <tr>
                 <th colspan='3' style='text-align: center;'>
-                    Campus: $campus_name
+                    $result_name
                 </th>
             </tr>
             <tr>
                 <th colspan='3' style='text-align: center;'>
-                    Address: $campus_address
+                    $campus_name ($campus_code)
                 </th>
             </tr>
             <tr>
                 <th colspan='3' style='text-align: center;'>
-                    Code: $campus_code
+                    $campus_address
                 </th>
             </tr>
             <tr>
@@ -30,7 +30,7 @@ HTML_HEADER = """
             </tr>
             <tr>
                 <th style='text-align: center;'>
-                    | Global Rank |
+                    | Rank |
                 </th>
                 <th style='text-align: center;'>
                     | Campus Rank |
@@ -60,7 +60,9 @@ HTML_FOOTER = """
             <tr><td colspan='3'></td></tr>
             <tr>
                 <td colspan='3' style='text-align: center;'>
-                    <small><i>Extracted by: <b><a href='https://www.gauravnyaupane.com.np'>Gaurav Nyaupane</a></b></i></small>
+                    <small>Extracted using <a href='https://github.com/nightmaregaurav/result-extractor'>result-extractor</a></small>
+                    <br>
+                    <small>A tool by <a href='https://www.gauravnyaupane.com.np'>Gaurav Nyaupane</a></small>
                 </td>
             </tr>
         </tfoot>
@@ -73,7 +75,7 @@ HTML_FOOTER = """
 HTML_BODY = """
             <tr>
                 <td style='text-align: center;'>
-                    $global_rank
+                    $rank
                 </td>
                 <td style='text-align: center;'>
                     $campus_rank
@@ -134,7 +136,9 @@ SUMMARY_HTML_FOOTER = """
             <tr><td colspan='4'></td></tr>
             <tr>
                 <td colspan='4' style='text-align: center;'>
-                    <small><i>Extracted by: <b><a href='https://www.gauravnyaupane.com.np'>Gaurav Nyaupane</a></b></i></small>
+                    <small>Extracted using <a href='https://github.com/nightmaregaurav/result-extractor'>result-extractor</a></small>
+                    <br>
+                    <small>A tool by <a href='https://www.gauravnyaupane.com.np'>Gaurav Nyaupane</a></small>  
                 </td>
             </tr>
         </tfoot>
