@@ -35,7 +35,7 @@ def prepare_result_table_in_result_db(folder_name: str) -> None:
     cursor.execute("CREATE TABLE result ("
                    "    symbol_no TEXT PRIMARY KEY,"
                    "    campus_code INTEGER,"
-                   "    global_rank INTEGER,"
+                   "    rank INTEGER,"
                    "    FOREIGN KEY (campus_code) REFERENCES campus (campus_code)"
                    ")")
     result_connection.commit()
@@ -79,7 +79,7 @@ def group_result_by_campus(folder_name: str) -> dict:
         result_db_connection: sqlite3.Connection = sqlite3.connect(result_db_path)
         cursor: sqlite3.Cursor = result_db_connection.cursor()
         # noinspection SqlDialectInspection
-        cursor.execute("SELECT symbol_no, global_rank FROM result WHERE campus_code = ? ORDER BY global_rank", (campus[0],))
+        cursor.execute("SELECT symbol_no, rank FROM result WHERE campus_code = ? ORDER BY rank", (campus[0],))
 
         data: list = cursor.fetchall()
         if len(data) > 0:
@@ -116,7 +116,7 @@ def create_html_table_file_for_campus_result(campus_code: int, data: list, folde
     file_html_template: Template = Template(HTML_BODY)
     for index, row in enumerate(data):
         file_html += file_html_template.substitute(
-            global_rank=row[1],
+            rank=row[1],
             campus_rank=index+1,
             symbol_number=row[0]
         )
