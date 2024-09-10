@@ -22,7 +22,7 @@ This tool is used to extract the results of individual campus from a given file 
 * Input file containing the Symbol Numbers of the global merit list.
 * Update/Change Campus.db to match campus code, name, and address to match your scenario. Default sample contains TU-BCA campuses as of 2022-Nov.
 
-## Setup & Usage (Watch this [Video](https://youtu.be/ekbwX7EmEk8?si=zTvei7xvzmGXABPc)) Or:
+## Setup & Usage (Watch this [Video](https://youtu.be/ekbwX7EmEk8?si=zTvei7xvzmGXABPc) or [Shorter video](https://www.youtube.com/watch?v=H322cgr5DTM)) or:
 * Clone the repository.
 * Create a python virtual environment and switch to it.
 * Install the requirements using `pip install -r requirements.txt`.
